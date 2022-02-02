@@ -16,7 +16,6 @@ Metadata:
         Parameters:
         - VpcId
         - SubnetId
-        - ImageId
         - Ec2KeyPair
         - MinvCpus
         - MaxvCpus
@@ -32,8 +31,6 @@ Metadata:
         default: VPC ID
       SubnetId:
         default: Subnet Id
-      ImageId:
-        default: Image Id
       Ec2KeyPair:
         default: Key Pair
       InstanceType:
@@ -55,9 +52,6 @@ Parameters:
   SubnetId:
     Type: AWS::EC2::Subnet::Id
     Description: The Subnet you want your batch compute environment to launch in. Must be a private subnet and in the VPC specified by VpcId.
-  ImageId:
-    Type: AWS::EC2::Image::Id
-    Description: AMI you want your AWS Batch Managed Compute Environment to use
   Ec2KeyPair:
     Type: AWS::EC2::KeyPair::KeyName
     Description: Amazon EC2 Key Pair for EC2 instances launched in your compute environment
@@ -128,7 +122,7 @@ Resources:
       State: ENABLED
       ComputeResources:
         Ec2KeyPair: !Ref Ec2KeyPair
-        ImageId: !Ref ImageId
+        ImageId: ami-01b6a9f67a93fb850 
         InstanceRole: !Ref ParabricksInstanceRole
         InstanceTypes: [!Ref InstanceType]
         MinvCpus: !Ref MinvCpus
