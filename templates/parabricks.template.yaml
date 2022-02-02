@@ -1,0 +1,199 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: This template deploys an environment to run Parabricks software using AWS Batch. (qs-1oqea624b)
+
+Metadata:
+  cfn-lint:
+    config:
+      ignore_checks:
+       - W9006 # temporary to get rid of warnings
+       - W9002 # temporary to get rid of warnings
+       - W9003 # temporary to get rid of warnings
+       - W9901 # Not passing all the default parameters to reduce verbosity
+  QuickStartDocumentation:
+    EntrypointName: "Parameters for deploying into an existing VPC"
+    Order: "1"
+  AWSAMIRegionMap:
+    Filters:
+      PARABRICKS:
+        owner-alias: aws-marketplace
+        product-code: 4g7l8f5ltgorbm94ui7ur31mk
+        product-code.type: marketplace
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+    - Label:
+        default: Network Configuration
+      Parameters:
+      - VPCID
+      - PrivateSubnet1ID
+      - PrivateSubnet2ID
+    - Label:
+        default: Parabricks Quick Start Configuration
+      Parameters:
+      - KeyPairName
+      - InstanceType
+      - MinvCpus
+      - MaxvCpus
+      - DesiredvCpus
+      - RetryNumber
+    - Label:
+        default: AWS Quick Start Configuration
+      Parameters:
+      - QSS3BucketName
+      - QSS3BucketRegion
+      - QSS3KeyPrefix
+    ParameterLabels:
+      KeyPairName:
+        default: Key Pair Name
+      PrivateSubnetID:
+        default: Private Subnet ID
+      VPCID:
+        default: VPC ID
+      QSS3BucketRegion:
+        default: Quick Start S3 bucket region
+      QSS3KeyPrefix:
+        default: Quick Start S3 Key Prefix
+      QSS3BucketName:
+        default: Quick Start S3 Bucket Name
+      InstanceType:
+        default: Instance Type
+      BidPercentage:
+        default: Spot Bid Percentage
+      RetryNumber:
+        default: AWS Batch Retry Number
+      MinvCpus:
+        default: Min vCPUs
+      MaxvCpus:
+        default: Max vCPUs
+      DesiredvCpus:
+        default: Desired vCPUs
+
+Mappings:
+  AWSAMIRegionMap:
+    AMI:
+      PARABRICKS: parabricks*
+    us-east-1:
+      PARABRICKS: ami-04060aa77693ac71c
+    us-west-2:
+      PARABRICKS: ami-04060aa77693ac71c
+    eu-west-1:
+      PARABRICKS: ami-04060aa77693ac71c
+    ap-southeast-2:
+      PARABRICKS: ami-04060aa77693ac71c
+
+Parameters:
+  InstanceType:
+    AllowedValues:
+    - p3.8xlarge
+    - p3.16xlarge
+    - p3dn.24xlarge
+    - g4dn.12xlarge
+    - g4dn.metal
+    Default: g4dn.12xlarge
+    Description: Amazon EC2 instance type for Parabricks in the AWS Batch Compute Environment.
+    Type: String
+  VPCID:
+    Type: AWS::EC2::VPC::Id
+    Description: The ID of your existing VPC (e.g., vpc-0343606e).
+  PrivateSubnetID:
+    Type: AWS::EC2::Subnet::Id
+    Description: The ID of the private subnet in the Availability Zone in your existing VPC (e.g., subnet-a0246dcd).
+  QSS3BucketName:
+    AllowedPattern: ^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$
+    ConstraintDescription: Quick Start bucket name can include numbers, lowercase
+      letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen
+      (-).
+    Default: aws-quickstart
+    Description: S3 bucket name for the Quick Start assets. Quick Start bucket name
+      can include numbers, lowercase letters, uppercase letters, and hyphens (-).
+      It cannot start or end with a hyphen (-).
+    Type: String
+  QSS3BucketRegion:
+    Default: 'us-east-1'
+    Description: 'The AWS Region where the Quick Start S3 bucket (QSS3BucketName) is hosted. When using your own bucket, you must specify this value.'
+    Type: String
+  QSS3KeyPrefix:
+    AllowedPattern: ^[0-9a-zA-Z-/]*$
+    ConstraintDescription: Quick Start key prefix can include numbers, lowercase letters,
+      uppercase letters, hyphens (-), and a forward slash (/) at the end of the prefix.
+    Description: S3 key prefix for the Quick Start assets. Quick Start key prefix
+      can include numbers, lowercase letters, uppercase letters, hyphens (-), and
+      forward slash (/).
+    Default: quickstart-illumina-dragen/
+    Type: String
+  KeyPairName:
+    Description: The name of an existing public/private key pair, which allows you
+      to securely connect to your instance after it launches
+    Type: AWS::EC2::KeyPair::KeyName
+  RetryNumber:
+    AllowedPattern: (?:\b|-)([1-9]|10)\b
+    ConstraintDescription: AWS Batch job retry number should be between 1 and 10
+    Description: Retry number for an AWS Batch job
+    Default: 1
+    Type: String
+  MinvCpus:
+    AllowedPattern: ^(0|[1-9][0-9]{0,2}|1000)$
+    ConstraintDescription: Valid between 0 and 1000, inclusive
+    Description: Minimum vCPUs for your AWS Batch Compute Environment. Recommend 0.
+    Default: 0
+    Type: String
+  MaxvCpus:
+    AllowedPattern: ^(0|[1-9][0-9]{0,2}|1000)$
+    ConstraintDescription: Valid between 0 and 1000, inclusive
+    Description: Maximum vCPUs for your AWS Batch Compute Environment
+    Type: String
+  DesiredvCpus:
+    AllowedPattern: ^(0|[1-9][0-9]{0,2}|1000)$
+    ConstraintDescription: Valid between 1 and 1000, inclusive
+    Description: Desired vCPUs for your AWS Batch Compute Environment. Recommend the same number as MinvCpus for cost-optimization.
+    Default: 0
+    Type: String
+
+Rules:
+  KeyPairsNotEmpty:
+    Assertions:
+    - Assert:
+        !Not
+        - Fn::EachMemberEquals:
+          - Fn::RefAll: AWS::EC2::KeyPair::KeyName
+          - ''
+      AssertDescription: All key pair parameters must not be empty
+  SubnetsInVPC:
+    Assertions:
+    - Assert:
+        Fn::EachMemberIn:
+        - Fn::ValueOfAll:
+          - AWS::EC2::Subnet::Id
+          - VpcId
+        - Fn::RefAll: AWS::EC2::VPC::Id
+      AssertDescription: All subnets must be in the VPC
+
+Conditions:
+  UsingDefaultBucket: !Equals [!Ref QSS3BucketName, 'aws-quickstart']
+
+Resources:
+  Batch:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub
+        - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/batch.template.yaml
+        - S3Region: !If [UsingDefaultBucket, !Ref 'AWS::Region', !Ref QSS3BucketRegion]
+          S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
+      Parameters:
+        ParabricksDockerImage: !Sub ${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${DockerBucketRepository.Outputs.Repository}:dragen
+        VpcId: !Ref VPCID
+        SubnetIds: !Sub "${PrivateSubnetID}"
+        InstanceType: !Ref InstanceType
+        ImageId: !FindInMap [ AWSAMIRegionMap, !Ref "AWS::Region", PARABRICKS ]
+        Ec2KeyPair: !Ref KeyPairName
+        MinvCpus: !Ref MinvCpus
+        MaxvCpus: !Ref MaxvCpus
+        DesiredvCpus: !Ref DesiredvCpus
+        RetryNumber: !Ref RetryNumber
+
+Outputs:
+  ParabricksJobDefinition:
+    Value: !GetAtt ParabricksStack.Outputs.ParabricksJobDefinition
+  ParabricksJobQueue:
+    Value: !GetAtt ParabricksStack.Outputs.ParabricksJobQueue
+  ParabricksComputeEnvironment:
+    Value: !GetAtt ParabricksStack.Outputs.ParabricksComputeEnvironment
