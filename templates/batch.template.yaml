@@ -196,8 +196,8 @@ Resources:
 
 Outputs:
   ParabricksJobDefinition:
-    Value: !GetAtt ParabricksStack.Outputs.ParabricksJobDefinition
+    Value: !Ref ParabricksJobDefinition
   ParabricksJobQueue:
-    Value: !GetAtt ParabricksStack.Outputs.ParabricksJobQueue
+    Value: !Ref ParabricksJobQueue
   ParabricksComputeEnvironment:
-    Value: !GetAtt ParabricksStack.Outputs.ParabricksComputeEnvironment
+    Value: !Ref ParabricksComputeEnvironment
