@@ -1,6 +1,6 @@
 AWSTemplateFormatVersion: 2010-09-09
 
-Description: Sets up your AWS Batch Environment for running Parabricks. 
+Description: Sets up your AWS Batch Environment for running Parabricks. (qs-1snnuupqo)
 
 Metadata:
   cfn-lint: { config: { ignore_checks: [W9006, W9002, W9003, E3008] } }
@@ -122,7 +122,7 @@ Resources:
       State: ENABLED
       ComputeResources:
         Ec2KeyPair: !Ref Ec2KeyPair
-        ImageId: ami-01b6a9f67a93fb850 
+        ImageId: ami-01b6a9f67a93fb850
         InstanceRole: !Ref ParabricksInstanceRole
         InstanceTypes: [!Ref InstanceType]
         MinvCpus: !Ref MinvCpus
