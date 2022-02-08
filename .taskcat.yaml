@@ -37,8 +37,8 @@ tests:
       #Needs Parameter defined
       ParabricksURI: <Needs Parameter>
       #These are not in template are they needed
-      GenomicsS3Bucket: "$[taskcat_autobucket]"
-      BidPercentage: "50"
+      #GenomicsS3Bucket: "$[taskcat_autobucket]"
+      #BidPercentage: "50"
 
      #These are using defaults so not needed.
       #InstanceType: "f1.2xlarge"

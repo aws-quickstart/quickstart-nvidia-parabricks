@@ -9,7 +9,6 @@ Metadata:
       - Label:
           default: Parabricks parameteres
         Parameters:
-        - GenomicsS3Bucket
         - ParabricksDockerImage
       - Label:
           default: AWS Batch Compute Environment Configuration
