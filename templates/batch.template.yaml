@@ -1,0 +1,196 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Description: Sets up your AWS Batch Environment for running Parabricks. (qs-1snnuupqo)
+
+Metadata:
+  cfn-lint: { config: { ignore_checks: [W9006, W9002, W9003, E3008] } }
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - Label:
+          default: Parabricks parameteres
+        Parameters:
+        - ParabricksDockerImage
+      - Label:
+          default: AWS Batch Compute Environment Configuration
+        Parameters:
+        - VpcId
+        - SubnetId
+        - Ec2KeyPair
+        - MinvCpus
+        - MaxvCpus
+        - DesiredvCpus
+        - InstanceType
+        - RetryNumber
+    ParameterLabels:
+      RetryNumber:
+        default: AWS Batch Retry Number
+      ParabricksDockerImage:
+        default: Parabricks Docker Image
+      VpcId:
+        default: VPC ID
+      SubnetId:
+        default: Subnet Id
+      Ec2KeyPair:
+        default: Key Pair
+      InstanceType:
+        default: Instance Type
+      MinvCpus:
+        default: Min vCPUs
+      MaxvCpus:
+        default: Max vCPUs
+      DesiredvCpus:
+        default: Desired vCPUs
+
+Parameters:
+  ParabricksDockerImage:
+    Type: String
+    Description: Path to Parabricks docker image repository URI.
+  VpcId:
+    Type: AWS::EC2::VPC::Id
+    Description: VpcId containing the SubnetId
+  SubnetId:
+    Type: AWS::EC2::Subnet::Id
+    Description: The Subnet you want your batch compute environment to launch in. Must be a private subnet and in the VPC specified by VpcId.
+  Ec2KeyPair:
+    Type: AWS::EC2::KeyPair::KeyName
+    Description: Amazon EC2 Key Pair for EC2 instances launched in your compute environment
+  MinvCpus:
+    Type: String
+    Description: Minimum number of CPUs in the compute environment. Default 0.
+    Default: 0
+    AllowedPattern: "[0-9]+"
+  DesiredvCpus:
+    Type: String
+    Description: Desired number of CPUs in the compute environment to launch with. Default 0.
+    Default: 0
+    AllowedPattern: "[0-9]+"
+  MaxvCpus:
+    Type: String
+    Description: Maximum number of CPUs in the compute environment. Should be >= than MinCpus
+    AllowedPattern: "[0-9]+"
+  RetryNumber:
+    Type: String
+    Default: "1"
+    Description: Number of retries for each AWS Batch job. Integer required.
+    MaxLength: 1
+    AllowedPattern: (?:\b|-)([1-9]|10)\b
+    ConstraintDescription: Value between 1 and 10
+  InstanceType:
+    AllowedValues:
+    - p3.8xlarge
+    - p3.16xlarge
+    - p3dn.24xlarge
+    - g4dn.12xlarge
+    - g4dn.metal
+    Default: g4dn.12xlarge
+    Description: Amazon EC2 instance type for Parabricks in the AWS Batch Compute Environment.
+    Type: String
+
+Resources:
+  # Batch Setup
+  BatchSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow https
+      VpcId: !Ref VpcId
+      SecurityGroupEgress:
+      - IpProtocol: tcp
+        FromPort: 443
+        ToPort: 443
+        CidrIp: 0.0.0.0/0
+  BatchServiceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - "batch.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      ManagedPolicyArns:
+      - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AWSBatchServiceRole
+  ParabricksComputeEnvironment:
+    Type: AWS::Batch::ComputeEnvironment
+    Properties:
+      ComputeEnvironmentName: parabricks-compute_environment
+      ServiceRole: !Ref BatchServiceRole
+      Type: MANAGED
+      State: ENABLED
+      ComputeResources:
+        Ec2KeyPair: !Ref Ec2KeyPair
+        ImageId: ami-01b6a9f67a93fb850
+        InstanceRole: !Ref ParabricksInstanceRole
+        InstanceTypes: [!Ref InstanceType]
+        MinvCpus: !Ref MinvCpus
+        DesiredvCpus: !Ref DesiredvCpus
+        MaxvCpus: !Ref MaxvCpus
+        SecurityGroupIds:
+        - !Ref BatchSecurityGroup
+        Subnets: !Ref SubnetId
+        Type: EC2
+
+  # Parabricks set up
+  ParabricksJobRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - "ecs-tasks.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+  ParabricksInstanceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - "ec2.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      ManagedPolicyArns:
+      - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role
+  ParabricksInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Roles:
+      - !Ref ParabricksInstanceRole
+      InstanceProfileName: !Ref ParabricksInstanceRole
+  ParabricksJobQueue:
+    Type: AWS::Batch::JobQueue
+    Properties:
+      JobQueueName: parabricks-job-queue
+      Priority: 100
+      State: ENABLED
+      ComputeEnvironment:
+        - !Ref ParabricksComputeEnvironment
+
+  ParabricksJobDefinition:
+    Type: AWS::Batch::JobDefinition
+    Properties:
+      JobDefinitionName: parabricks-job-definition
+      Type: container
+      RetryStrategy:
+        Attempts: !Ref RetryNumber
+      ContainerProperties:
+        Image: !Ref ParabricksDockerImage
+        Vcpus: !If [Is2xl, 8, !If [Is4xl, 16, 64]]
+        Memory: !If [Is2xl, 120000, !If [Is4xl, 240000, 800000]]
+        JobRoleArn: !GetAtt ParabricksJobRole.Arn
+
+Outputs:
+  ParabricksJobDefinition:
+    Value: !Ref ParabricksJobDefinition
+  ParabricksJobQueue:
+    Value: !Ref ParabricksJobQueue
+  ParabricksComputeEnvironment:
+    Value: !Ref ParabricksComputeEnvironment

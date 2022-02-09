@@ -1,0 +1,50 @@
+[
+    {
+        "ParameterKey": "AvailabilityZones",
+        "ParameterValue": "$[taskcat_genaz_1]"
+    },
+    {
+        "ParameterKey": "KeyPairName",
+        "ParameterValue": "$[taskcat_getkeypair]"
+    },
+    {
+        "ParameterKey": "PrivateSubnetCIDR",
+        "ParameterValue": "10.150.32.0/20"
+    },
+    {
+        "ParameterKey": "PublicSubnetCIDR",
+        "ParameterValue": "10.150.0.0/20"
+    },
+    {
+        "ParameterKey": "VPCCIDR",
+        "ParameterValue": "10.150.0.0/16"
+    },
+    {
+        "ParameterKey": "QSS3BucketName",
+        "ParameterValue": "$[taskcat_autobucket]"
+    },
+    {
+        "ParameterKey": "QSS3KeyPrefix",
+        "ParameterValue": "quickstart-nvidia-parabricks/"
+    },
+    {
+        "ParameterKey": "InstanceType",
+        "ParameterValue": "g4dn.8xlarge"
+    },
+    {
+        "ParameterKey": "RetryNumber",
+        "ParameterValue": "1"
+    },
+    {
+        "ParameterKey": "MinvCpus",
+        "ParameterValue": "0"
+    },
+    {
+        "ParameterKey": "MaxvCpus",
+        "ParameterValue": "256"
+    },
+    {
+        "ParameterKey": "DesiredvCpus",
+        "ParameterValue": "0"
+    }
+]
