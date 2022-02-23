@@ -8,8 +8,7 @@ AWS Cloud.
 
 [#architecture1]
 .Quick Start architecture for {partner-product-short-name} on AWS
-image::../images/deployment_guide/images/parabricks_aws_qsg_architecture_diagram.jpg[Architecture]
-
+image::../images/parabricks_aws_qsg_architecture_diagram.png[Architecture,width=648,height=439]
 As shown in <<architecture1>>, the Quick Start sets up the following:
 
 * A highly available architecture that spans two Availability Zones.*
