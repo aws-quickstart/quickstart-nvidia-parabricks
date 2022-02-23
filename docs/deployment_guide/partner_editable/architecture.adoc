@@ -8,7 +8,7 @@ AWS Cloud.
 
 [#architecture1]
 .Quick Start architecture for {partner-product-short-name} on AWS
-image::../images/parabricks_aws_qsg_architecture_diagram.jpg[Architecture]
+image::../images/deployment_guide/images/parabricks_aws_qsg_architecture_diagram.jpg[Architecture]
 
 As shown in <<architecture1>>, the Quick Start sets up the following:
 
