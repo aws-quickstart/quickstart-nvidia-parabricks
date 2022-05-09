@@ -1,14 +1,14 @@
 :quickstart-project-name: quickstart-nvidia-parabricks
 :quickstart-github-org: aws-quickstart
-:partner-product-name: NVIDIA CLARA Parabricks
+:partner-product-name: NVIDIA Clara Parabricks
 :partner-product-short-name: Parabricks
-:partner-company-name: NVIDIA
-:doc-month: February
+:partner-company-name: NVIDIA Corporation
+:doc-month: May
 :doc-year: 2022
 :partner-contributors: Gary Burnett, {partner-company-name}
 //:other-contributors: Akua Mansa, Trek10
-:aws-contributors: Olivia Choudhury
-:aws-ia-contributors: Vinod Shukla, Troy Ameigh, AWS Integration & Automation team
+:aws-contributors: Olivia Choudhury, AWS Partner Solutions Architect
+:aws-ia-contributors: Vinod Shukla and Troy Ameigh, AWS Integration and Automation team
 :deployment_time: 15 minutes
 :default_deployment_region: us-east-1
 // :private_repo:

@@ -2,27 +2,23 @@
 
 == Predeployment steps
 
-We need to create a version of the Parabricks container will work with AWS Batch and host it on AWS ECR:
+Create a version of the {partner-product-short-name} container that works with AWS Batch and then host it on Amazon ECR. Perform the following steps.
 
-Step 0: Create an ECR repository on AWS to hold this docker image on AWS
+. Create an Amazon ECR repository on AWS to hold the Docker image on AWS. Make note of the Uniform Resource Identifier (URI) of the repository. 
+. Install {partner-product-short-name} on a machine that has access to Sudo.
+. Request a https://www.nvidia.com/en-us/clara/genomics/parabricks-free-trial/[Parabricks trial license^].
+. Using the installer tarball, run: 
 
-- Note: Keep the URI of his repo handy
-
-Step 1: Install Parabricks normally onto any machine where you have sudo access
-
-- Request a https://www.nvidia.com/en-us/clara/genomics/parabricks-free-trial/[Parabricks trial license]
-
-Once you have the installer tarball you can run:
 ----
 sudo parabricks/installer.py
 ----
 
-Verify your installation by running:
+. To verify the installation, run:
 ----
 pbrun –help
 ----
 
-Step 2: Modify the Docker image to be compatible with AWS Batch
+. Modify the Docker image so that it's compatible with AWS Batch.
 
 - Create this Dockerfile which builds on top of the Docker image the installer just created
 - Note: Don’t forget to add your Parabricks version number in line 1
