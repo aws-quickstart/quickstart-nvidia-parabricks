@@ -13,21 +13,21 @@ Perform the following steps to create a version of the {partner-product-short-na
 sudo parabricks/installer.py
 ----
 
-[start=4]
+[start=5]
 . To verify the installation, run:
 ----
 pbrun –help
 ----
 
-[start=5]
+[start=6]
 . Modify the Docker image so that it's compatible with AWS Batch. Specifically, create the Docker file that builds on top of the Docker image that the installer just created. Don’t forget to add your {partner-product-short-name} version number in line 1. 
 
-[start=6]
+[start=7]
 . To view the current Docker file, run:
 ----
 $ cat Dockerfile
 ----
-[start=7]
+[start=8]
 . To edit and verify your Docker file, run:
 ----
 $ vi Dockerfile
@@ -48,13 +48,13 @@ ENV PATH="/parabricks/release-$version:${PATH}"
 ENTRYPOINT [""]
 ----
 
-[start=8]
+[start=9]
 . To build the Docker image and tag it with the URI for the ECR repository, run:
 ----
 $ docker build -t <URI for your ECR repository> .
 ----
 
-[start=9]
+[start=10]
 . To upload the image to Amazon ECR, run:
 
 ----
