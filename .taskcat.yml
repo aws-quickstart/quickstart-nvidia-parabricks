@@ -34,20 +34,9 @@ tests:
       VPCCIDR: "10.150.0.0/16"
       QSS3BucketName: "$[taskcat_autobucket]"
       QSS3KeyPrefix: "quickstart-nvidia-parabricks/"
-      #Needs Parameter defined
-      ParabricksURI: <Needs Parameter>
-      #These are not in template are they needed
-      #GenomicsS3Bucket: "$[taskcat_autobucket]"
-      #BidPercentage: "50"
-
-     #These are using defaults so not needed.
-      #InstanceType: "f1.2xlarge"
-      #RetryNumber: "1"
-      #MinvCpus: "0"
-      #MaxvCpus: "256"
-      #DesiredvCpus: "0"
+      ParabricksURI: override
     regions:
-      - eu-west-1
-      - us-east-1
+     #- eu-west-1
+      #- us-east-1
       - us-west-2
     template: templates/parabricks-main.template.yaml
