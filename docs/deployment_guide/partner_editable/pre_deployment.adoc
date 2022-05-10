@@ -54,5 +54,5 @@ $ docker build -t <URI for your ECR repository> .
 Step 3: Upload this image to ECR
 
 ----
-aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin <URI for your ECR repository>
+aws ecr get-login-password --region us-west-2 \| docker login --username AWS --password-stdin <URI for your ECR repository>
 ----
