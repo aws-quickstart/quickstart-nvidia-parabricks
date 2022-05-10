@@ -2,10 +2,10 @@
 
 == Predeployment steps
 
-Create a version of the {partner-product-short-name} container that works with AWS Batch and then host it on Amazon ECR. Perform the following steps.
+Perform the following steps to create a version of the {partner-product-short-name} container that works with AWS Batch and then host it on Amazon ECR. 
 
 . Create an Amazon ECR repository on AWS to hold the Docker image on AWS. Make note of the Uniform Resource Identifier (URI) of the repository. 
-. Install {partner-product-short-name} on a machine that has access to Sudo.
+. Install {partner-product-short-name} on a machine that has access to sudo.
 . Request a https://www.nvidia.com/en-us/clara/genomics/parabricks-free-trial/[Parabricks trial license^].
 . Using the installer tarball, run: 
 
@@ -13,21 +13,22 @@ Create a version of the {partner-product-short-name} container that works with A
 sudo parabricks/installer.py
 ----
 
+[start=4]
 . To verify the installation, run:
 ----
 pbrun –help
 ----
 
-. Modify the Docker image so that it's compatible with AWS Batch.
+[start=5]
+. Modify the Docker image so that it's compatible with AWS Batch. Specifically, create the Docker file that builds on top of the Docker image that the installer just created. Don’t forget to add your {partner-product-short-name} version number in line 1. 
 
-- Create this Dockerfile which builds on top of the Docker image the installer just created
-- Note: Don’t forget to add your Parabricks version number in line 1
-
-View current "DockerFile":
+[start=6]
+. To view the current Docker file, run:
 ----
 $ cat Dockerfile
 ----
-Edit your "DockerFile" and verify the following:
+[start=7]
+. To edit and verify your Docker file, run:
 ----
 $ vi Dockerfile
 ----
@@ -43,15 +44,18 @@ RUN cd /parabricks && tar xzvf release-$version.tar.gz
 # Add the pbrun executable to the path
 ENV PATH="/parabricks/release-$version:${PATH}"
 
-# Remove the entrypoint from the container to work with AWS Batch
+# Remove the entry point from the container to work with AWS Batch
 ENTRYPOINT [""]
 ----
-Now build the Docker image and tag it with the URI for the ECR repository
+
+[start=8]
+. To build the Docker image and tag it with the URI for the ECR repository, run:
 ----
 $ docker build -t <URI for your ECR repository> .
 ----
 
-Step 3: Upload this image to ECR
+[start=9]
+. To upload the image to Amazon ECR, run:
 
 ----
 aws ecr get-login-password --region us-west-2 \| docker login --username AWS --password-stdin <URI for your ECR repository>
