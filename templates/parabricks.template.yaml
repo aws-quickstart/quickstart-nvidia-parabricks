@@ -21,12 +21,12 @@ Metadata:
   AWS::CloudFormation::Interface:
     ParameterGroups:
     - Label:
-        default: Network Configuration
+        default: Network configuration
       Parameters:
       - VPCID
       - PrivateSubnetID
     - Label:
-        default: Parabricks Quick Start Configuration
+        default: Parabricks Quick Start configuration
       Parameters:
       - ParabricksURI
       - KeyPairName
@@ -36,34 +36,35 @@ Metadata:
       - DesiredvCpus
       - RetryNumber
     - Label:
-        default: AWS Quick Start Configuration
+        default: AWS Quick Start configuration
       Parameters:
       - QSS3BucketName
       - QSS3BucketRegion
       - QSS3KeyPrefix
     ParameterLabels:
-      ParabricksURI:
-        default: The URI of the Parabricks ECR Repository
+      ParabricksURI: 
+        default: URI of Parabricks Amazon ECR repository  
+
       KeyPairName:
-        default: Key Pair Name
+        default: Key pair name
       PrivateSubnetID:
-        default: Private Subnet ID
+        default: Private subnet ID
       VPCID:
         default: VPC ID
       QSS3BucketRegion:
-        default: Quick Start S3 bucket region
+        default: Quick Start S3 bucket Region
       QSS3KeyPrefix:
-        default: Quick Start S3 Key Prefix
+        default: Quick Start S3 key prefix
       QSS3BucketName:
-        default: Quick Start S3 Bucket Name
+        default: Quick Start S3 bucket name
       InstanceType:
-        default: Instance Type
+        default: Instance type
       RetryNumber:
-        default: AWS Batch Retry Number
+        default: AWS Batch retry number
       MinvCpus:
-        default: Min vCPUs
+        default: Minimum vCPUs
       MaxvCpus:
-        default: Max vCPUs
+        default: Maximum vCPUs
       DesiredvCpus:
         default: Desired vCPUs
 
@@ -89,7 +90,7 @@ Parameters:
     - g4dn.12xlarge
     - g4dn.metal
     Default: g4dn.12xlarge
-    Description: Amazon EC2 instance type for Parabricks in the AWS Batch Compute Environment.
+    Description: Amazon EC2 instance type for Parabricks in the AWS Batch compute environment.
     Type: String
   VPCID:
     Type: AWS::EC2::VPC::Id
@@ -122,32 +123,33 @@ Parameters:
     Type: String
   KeyPairName:
     Description: The name of an existing public/private key pair, which allows you
-      to securely connect to your instance after it launches
+      to securely connect to your instance after it launches.
     Type: AWS::EC2::KeyPair::KeyName
   ParabricksURI:
-    Description: The URI of the ECR repository with the Parabricks Docker image
+    Description: The URI of the ECR repository with the Parabricks Docker image. 
+
     Type: String
   RetryNumber:
     AllowedPattern: (?:\b|-)([1-9]|10)\b
-    ConstraintDescription: AWS Batch job retry number should be between 1 and 10
-    Description: Retry number for an AWS Batch job
+    ConstraintDescription: AWS Batch job retry number should be between 1 and 10.
+    Description: Retry number for an AWS Batch job.
     Default: 1
     Type: String
   MinvCpus:
     AllowedPattern: ^(0|[1-9][0-9]{0,2}|1000)$
-    ConstraintDescription: Valid between 0 and 1000, inclusive
-    Description: Minimum vCPUs for your AWS Batch Compute Environment. Recommend 0.
+    ConstraintDescription: Valid between 0 and 1000, inclusive.
+    Description: Minimum vCPUs for your AWS Batch compute environment. Recommendation is 0.
     Default: 0
     Type: String
   MaxvCpus:
     AllowedPattern: ^(0|[1-9][0-9]{0,2}|1000)$
-    ConstraintDescription: Valid between 0 and 1000, inclusive
-    Description: Maximum vCPUs for your AWS Batch Compute Environment
+    ConstraintDescription: Valid between 0 and 1000, inclusive.
+    Description: Maximum vCPUs for your AWS Batch compute environment.
     Type: String
   DesiredvCpus:
     AllowedPattern: ^(0|[1-9][0-9]{0,2}|1000)$
-    ConstraintDescription: Valid between 1 and 1000, inclusive
-    Description: Desired vCPUs for your AWS Batch Compute Environment. Recommend the same number as MinvCpus for cost-optimization.
+    ConstraintDescription: Valid between 1 and 1000, inclusive.
+    Description: Desired vCPUs for your AWS Batch compute environment. Recommendation is the same number as minimum vCPUs for cost optimization.
     Default: 0
     Type: String
 
@@ -159,7 +161,7 @@ Rules:
         - Fn::EachMemberEquals:
           - Fn::RefAll: AWS::EC2::KeyPair::KeyName
           - ''
-      AssertDescription: All key pair parameters must not be empty
+      AssertDescription: Key pair parameters must not be empty.
   SubnetsInVPC:
     Assertions:
     - Assert:
@@ -168,7 +170,7 @@ Rules:
           - AWS::EC2::Subnet::Id
           - VpcId
         - Fn::RefAll: AWS::EC2::VPC::Id
-      AssertDescription: All subnets must be in the VPC
+      AssertDescription: All subnets must be in the VPC.
 
 Conditions:
   UsingDefaultBucket: !Equals [!Ref QSS3BucketName, 'aws-quickstart']
@@ -195,10 +197,10 @@ Resources:
 
 Outputs:
   ParabricksJobDefinition:
-    Description: The AWS Batch Job Definition for Parabricks
+    Description: The AWS Batch job definition for Parabricks.
     Value: !GetAtt Batch.Outputs.ParabricksJobDefinition
   ParabricksJobQueue:
-    Description: The Job Queue to submit jobs to
+    Description: The job queue for submitting jobs.
     Value: !GetAtt Batch.Outputs.ParabricksJobQueue
   ParabricksComputeEnvironment:
     Value: !GetAtt Batch.Outputs.ParabricksComputeEnvironment
