@@ -24,8 +24,7 @@ Metadata:
         default: Network Configuration
       Parameters:
       - VPCID
-      - PrivateSubnet1ID
-      - PrivateSubnet2ID
+      - PrivateSubnetID
     - Label:
         default: Parabricks Quick Start Configuration
       Parameters:
@@ -43,8 +42,8 @@ Metadata:
       - QSS3BucketRegion
       - QSS3KeyPrefix
     ParameterLabels:
-      ParabricksURI: 
-        default: The URI of the Parabricks ECR Repository  
+      ParabricksURI:
+        default: The URI of the Parabricks ECR Repository
       KeyPairName:
         default: Key Pair Name
       PrivateSubnetID:
@@ -126,7 +125,7 @@ Parameters:
       to securely connect to your instance after it launches
     Type: AWS::EC2::KeyPair::KeyName
   ParabricksURI:
-    Description: The URI of the ECR repository with the Parabricks Docker image 
+    Description: The URI of the ECR repository with the Parabricks Docker image
     Type: String
   RetryNumber:
     AllowedPattern: (?:\b|-)([1-9]|10)\b
