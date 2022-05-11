@@ -17,7 +17,7 @@ Metadata:
     - Label:
         default: Network Configuration
       Parameters:
-      - AvailabilityZone
+      - AvailabilityZones
       - VPCCIDR
       - PrivateSubnetCIDR
       - PublicSubnetCIDR
@@ -38,8 +38,8 @@ Metadata:
       - QSS3BucketRegion
       - QSS3KeyPrefix
     ParameterLabels:
-      AvailabilityZone:
-        default: Availability Zone
+      AvailabilityZones:
+        default: Availability Zones
       ParabricksURI:
         default: The URI of the Parabricks ECR Repository
       KeyPairName:
@@ -195,6 +195,7 @@ Resources:
         MaxvCpus: !Ref MaxvCpus
         DesiredvCpus: !Ref DesiredvCpus
         RetryNumber: !Ref RetryNumber
+        ParabricksURI: !Ref ParabricksURI
 
 Outputs:
   ParabricksJobDefinition:

@@ -182,9 +182,9 @@ Resources:
         - S3Region: !If [UsingDefaultBucket, !Ref 'AWS::Region', !Ref QSS3BucketRegion]
           S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
       Parameters:
-        ParabricksDockerImage: !Sub ${ParabricksURI}
+        ParabricksDockerImage: !Ref ParabricksURI
         VpcId: !Ref VPCID
-        SubnetIds: !Sub "${PrivateSubnetID}"
+        SubnetIds: !Ref PrivateSubnetID
         InstanceType: !Ref InstanceType
         ImageId: !FindInMap [ AWSAMIRegionMap, !Ref "AWS::Region", PARABRICKS ]
         Ec2KeyPair: !Ref KeyPairName

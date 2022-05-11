@@ -46,13 +46,13 @@ Parameters:
     Type: String
     Description: Path to Parabricks docker image repository URI.
   VpcId:
-    Type: AWS::EC2::VPC::Id
+    Type: String
     Description: VpcId containing the SubnetId
   SubnetId:
-    Type: AWS::EC2::Subnet::Id
+    Type: String
     Description: The Subnet you want your batch compute environment to launch in. Must be a private subnet and in the VPC specified by VpcId.
   Ec2KeyPair:
-    Type: AWS::EC2::KeyPair::KeyName
+    Type: String
     Description: Amazon EC2 Key Pair for EC2 instances launched in your compute environment
   MinvCpus:
     Type: String
@@ -129,7 +129,8 @@ Resources:
         MaxvCpus: !Ref MaxvCpus
         SecurityGroupIds:
         - !Ref BatchSecurityGroup
-        Subnets: !Ref SubnetId
+        Subnets:
+        - !Ref SubnetId
         Type: EC2
 
   # Parabricks set up
@@ -172,7 +173,8 @@ Resources:
       Priority: 100
       State: ENABLED
       ComputeEnvironmentOrder:
-        - !Ref ParabricksComputeEnvironment
+        - Order: 1
+          ComputeEnvironment: !Ref ParabricksComputeEnvironment
 
   ParabricksJobDefinition:
     Type: AWS::Batch::JobDefinition
