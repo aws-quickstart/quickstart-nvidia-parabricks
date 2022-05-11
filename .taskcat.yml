@@ -22,6 +22,7 @@ project:
     - us-west-1
     - us-west-2
   s3_bucket: ''
+  template: templates/parabricks-main.template.yaml
 tests:
   default:
     parameters:
@@ -32,11 +33,10 @@ tests:
       PublicSubnet1CIDR: "10.150.0.0/20"
       PublicSubnet2CIDR: "10.150.16.0/20"
       VPCCIDR: "10.150.0.0/16"
-      QSS3BucketName: "$[taskcat_autobucket]"
-      QSS3KeyPrefix: "quickstart-nvidia-parabricks/"
+      QSS3BucketName: $[taskcat_autobucket]
+      QSS3BucketRegion: $[taskcat_current_region]
       ParabricksURI: override
     regions:
      #- eu-west-1
       #- us-east-1
       - us-west-2
-    template: templates/parabricks-main.template.yaml
