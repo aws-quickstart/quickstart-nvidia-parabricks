@@ -4,22 +4,9 @@ project:
   #marketplace-ami: true
   s3_regional_buckets: true
   regions:
-    - ap-northeast-1
-    - ap-northeast-2
-    - ap-south-1
-    - ap-southeast-1
     - ap-southeast-2
-    # - ap-east-1
-    - ca-central-1
-    - eu-central-1
     - eu-west-1
-    - eu-west-2
-    - eu-west-3
-    # - me-south-1
-    - sa-east-1
     - us-east-1
-    - us-east-2
-    - us-west-1
     - us-west-2
   s3_bucket: ''
   template: templates/parabricks-main.template.yaml
@@ -28,11 +15,11 @@ tests:
     parameters:
       AvailabilityZones: "$[taskcat_genaz_2]"
       KeyPairName: "$[taskcat_getkeypair]"
-      PrivateSubnet1CIDR: "10.150.32.0/20"
-      PrivateSubnet2CIDR: "10.150.48.0/20"
-      PublicSubnet1CIDR: "10.150.0.0/20"
-      PublicSubnet2CIDR: "10.150.16.0/20"
-      VPCCIDR: "10.150.0.0/16"
+      PrivateSubnet1ACIDR: "10.0.0.0/19"
+      PrivateSubnet2CIDR: "10.0.32.0/19"
+      PublicSubnet1CIDR: "10.0.128.0/20"
+      PublicSubnet2CIDR: "10.0.144.0/20"
+      VPCCIDR: "10.0.0.0/16"
       QSS3BucketName: $[taskcat_autobucket]
       QSS3BucketRegion: $[taskcat_current_region]
       ParabricksURI: override
@@ -40,3 +27,4 @@ tests:
      #- eu-west-1
       #- us-east-1
       - us-west-2
+      #- ap-southeast-2

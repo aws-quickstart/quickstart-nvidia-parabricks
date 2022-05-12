@@ -42,8 +42,8 @@ Metadata:
       - QSS3BucketRegion
       - QSS3KeyPrefix
     ParameterLabels:
-      ParabricksURI: 
-        default: URI of Parabricks Amazon ECR repository  
+      ParabricksURI:
+        default: URI of Parabricks Amazon ECR repository
 
       KeyPairName:
         default: Key pair name
@@ -73,13 +73,13 @@ Mappings:
     AMI:
       PARABRICKS: parabricks*
     us-east-1:
-      PARABRICKS: ami-04060aa77693ac71c
+      PARABRICKS: ami-0036b6dcf813726a7
     us-west-2:
-      PARABRICKS: ami-04060aa77693ac71c
+      PARABRICKS: ami-0725d9bf26a2da1c2
     eu-west-1:
-      PARABRICKS: ami-04060aa77693ac71c
+      PARABRICKS: ami-090f68b9e60b8795e
     ap-southeast-2:
-      PARABRICKS: ami-04060aa77693ac71c
+      PARABRICKS: ami-0e9af619817590acd
 
 Parameters:
   InstanceType:
@@ -93,10 +93,10 @@ Parameters:
     Description: Amazon EC2 instance type for Parabricks in the AWS Batch compute environment.
     Type: String
   VPCID:
-    Type: AWS::EC2::VPC::Id
+    Type: String
     Description: The ID of your existing VPC (e.g., vpc-0343606e).
   PrivateSubnetID:
-    Type: AWS::EC2::Subnet::Id
+    Type: String
     Description: The ID of the private subnet in the Availability Zone in your existing VPC (e.g., subnet-a0246dcd).
   QSS3BucketName:
     AllowedPattern: ^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$
@@ -126,8 +126,7 @@ Parameters:
       to securely connect to your instance after it launches.
     Type: AWS::EC2::KeyPair::KeyName
   ParabricksURI:
-    Description: The URI of the ECR repository with the Parabricks Docker image. 
-
+    Description: The URI of the ECR repository with the Parabricks Docker image.
     Type: String
   RetryNumber:
     AllowedPattern: (?:\b|-)([1-9]|10)\b
@@ -186,9 +185,12 @@ Resources:
       Parameters:
         ParabricksDockerImage: !Ref ParabricksURI
         VpcId: !Ref VPCID
-        SubnetIds: !Ref PrivateSubnetID
+        SubnetId: !Ref PrivateSubnetID
         InstanceType: !Ref InstanceType
-        ImageId: !FindInMap [ AWSAMIRegionMap, !Ref "AWS::Region", PARABRICKS ]
+        ImageId: !FindInMap
+          - AWSAMIRegionMap
+          - !Ref 'AWS::Region'
+          - PARABRICKS
         Ec2KeyPair: !Ref KeyPairName
         MinvCpus: !Ref MinvCpus
         MaxvCpus: !Ref MaxvCpus
