@@ -21,6 +21,7 @@ Metadata:
         - DesiredvCpus
         - InstanceType
         - RetryNumber
+        - ImageId
     ParameterLabels:
       RetryNumber:
         default: AWS Batch Retry Number
@@ -40,19 +41,20 @@ Metadata:
         default: Max vCPUs
       DesiredvCpus:
         default: Desired vCPUs
-
+      ImageId:
+        default: Image ID
 Parameters:
   ParabricksDockerImage:
     Type: String
     Description: Path to Parabricks docker image repository URI.
   VpcId:
-    Type: AWS::EC2::VPC::Id
+    Type: String
     Description: VpcId containing the SubnetId
   SubnetId:
-    Type: AWS::EC2::Subnet::Id
+    Type: String
     Description: The Subnet you want your batch compute environment to launch in. Must be a private subnet and in the VPC specified by VpcId.
   Ec2KeyPair:
-    Type: AWS::EC2::KeyPair::KeyName
+    Type: String
     Description: Amazon EC2 Key Pair for EC2 instances launched in your compute environment
   MinvCpus:
     Type: String
@@ -84,6 +86,9 @@ Parameters:
     - g4dn.metal
     Default: g4dn.12xlarge
     Description: Amazon EC2 instance type for Parabricks in the AWS Batch Compute Environment.
+    Type: String
+  ImageId:
+    Description: Amazon AMI for Parabricks in the AWS Batch Compute Environment.
     Type: String
 
 Resources:
@@ -121,7 +126,7 @@ Resources:
       State: ENABLED
       ComputeResources:
         Ec2KeyPair: !Ref Ec2KeyPair
-        ImageId: ami-01b6a9f67a93fb850
+        ImageId: !Ref ImageId
         InstanceRole: !Ref ParabricksInstanceRole
         InstanceTypes: [!Ref InstanceType]
         MinvCpus: !Ref MinvCpus
@@ -129,7 +134,8 @@ Resources:
         MaxvCpus: !Ref MaxvCpus
         SecurityGroupIds:
         - !Ref BatchSecurityGroup
-        Subnets: !Ref SubnetId
+        Subnets:
+        - !Ref SubnetId
         Type: EC2
 
   # Parabricks set up
@@ -171,8 +177,9 @@ Resources:
       JobQueueName: parabricks-job-queue
       Priority: 100
       State: ENABLED
-      ComputeEnvironment:
-        - !Ref ParabricksComputeEnvironment
+      ComputeEnvironmentOrder:
+        - Order: 1
+          ComputeEnvironment: !Ref ParabricksComputeEnvironment
 
   ParabricksJobDefinition:
     Type: AWS::Batch::JobDefinition
@@ -183,8 +190,8 @@ Resources:
         Attempts: !Ref RetryNumber
       ContainerProperties:
         Image: !Ref ParabricksDockerImage
-        Vcpus: !If [Is2xl, 8, !If [Is4xl, 16, 64]]
-        Memory: !If [Is2xl, 120000, !If [Is4xl, 240000, 800000]]
+        Vcpus: 8
+        Memory: 120000
         JobRoleArn: !GetAtt ParabricksJobRole.Arn
 
 Outputs:
