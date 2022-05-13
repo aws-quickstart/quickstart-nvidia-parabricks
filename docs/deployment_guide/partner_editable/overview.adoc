@@ -1,4 +1,8 @@
-This Quick Start deploys {partner-product-name} on the AWS Cloud. If you are unfamiliar with AWS Quick Starts we recommend that you read the https://aws-ia.github.io/content/qs_info.html[AWS Quick Start General Content Guide].
+This Quick Start deploys {partner-product-short-name}, an accelerated genomics analysis framework, on the AWS Cloud. It provides researchers, clinical teams, and medical centers an efficient way to adopt {partner-product-short-name} and run multiple standalone tools and pipelines for secondary and tertiary analysis of large-scale genomic data. You can analyze data for cancer sequencing projects, population studies, ribonucleic acid sequencing (RNA-seq), and more.  
+
+The Quick Start builds an AWS environment that spans two Availability Zones for high availability, and provisions an AWS Batch compute environment for on-demand instances. The Quick Start environment includes {partner-product-short-name} G4dn instances with graphics processing units (GPUs) for hardware acceleration.
+
+If you're unfamiliar with AWS Quick Starts, refer to the https://aws-ia.github.io/content/qs_info.html[AWS Quick Start General Information Guide^].
 
 // This deployment guide covers the steps necessary to deploy the Quick Start. For more advanced information on the product, troubleshooting, or additional functionality, see the https://{quickstart-github-org}.github.io/{quickstart-project-name}/operational/index.html[Operational guide].
 
