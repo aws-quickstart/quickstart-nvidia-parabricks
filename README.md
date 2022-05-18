@@ -1,4 +1,4 @@
-## QS Name on the AWS Cloud—Quick Start
+## NVIDIA Clara Parabricks on the AWS Cloud—Quick Start
 
 For architectural details, step-by-step instructions, and customization options, see the [deployment guide](https://aws-quickstart.github.io/quickstart-nvidia-parabricks/).
 
